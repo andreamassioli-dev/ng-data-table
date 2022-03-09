@@ -1,0 +1,66 @@
+<div class="data-table-container">
+  <div class="table-responsive">
+    <table class="table" [ngClass]="tableClasses">
+      <thead class="thead-light">
+        <tr>
+          <th *ngFor="let column of columns" [ngClass]="getColumnClass(column)">
+            <a *ngIf="sortable && column.sortable !== false; else textHeader" href="#"
+              (click)="sortBy(column); $event.preventDefault()">
+              {{ column.label }}
+              <ng-container *ngIf="isSortedBy(column)">
+                <ng-container *ngIf="isSortedByDesc(column); else sortIconUp">
+                  <span #sortIconDownEl><ng-content select="[sort-icon-down]"></ng-content></span>
+                  <span *ngIf="!sortIconDownEl.children?.length">⇩</span>
+                </ng-container>
+                <ng-template #sortIconUp>
+                  <span #sortIconUpEl><ng-content select="[sort-icon-up]"></ng-content></span>
+                  <span *ngIf="!sortIconUpEl.children?.length">⇧</span>
+                </ng-template>
+              </ng-container>
+            </a>
+            <ng-template #textHeader>
+              {{ column.label }}
+            </ng-template>
+          </th>
+          <th *ngIf="actionsTemplate" class="col-actions">
+            <div #actionsLabelHeaderEl><ng-content select="[actions-label]"></ng-content></div>
+            <span *ngIf="!actionsLabelHeaderEl.children?.length">Actions</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngIf="values.length; else noValue">
+          <tr *ngFor="let value of values">
+            <td *ngFor="let column of columns" [ngClass]="getColumnClass(column)" (click)="select(value)">
+              <ng-container *ngIf="getColumnTemplate(column) as columnTemplate; else noColumnTemplate"
+                [ngTemplateOutlet]="columnTemplate.templateRef" [ngTemplateOutletContext]="{$implicit: value}">
+              </ng-container>
+              <ng-template #noColumnTemplate>
+                {{ getValue(column, value) }}
+              </ng-template>
+            </td>
+            <td *ngIf="actionsTemplate" class="col-actions">
+              <ng-container [ngTemplateOutlet]="actionsTemplate.templateRef"
+                [ngTemplateOutletContext]="{$implicit: value}"></ng-container>
+            </td>
+          </tr>
+        </ng-container>
+        <ng-template #noValue>
+          <tr>
+            <td [attr.colspan]="columnsTotal" class="col-no-results">
+              <span *ngIf="!loading">
+                <ng-container #noResultEl><ng-content select="[no-results-label]"></ng-content></ng-container>
+                <span *ngIf="!noResultEl.children?.length">No result</span>
+              </span>
+            </td>
+          </tr>
+        </ng-template>
+      </tbody>
+    </table>
+    <div *ngIf="loading" class="loading-label">
+      <div #loadingEl><ng-content select="[loading]"></ng-content></div>
+      <span *ngIf="!loadingEl?.children?.length">Loading...</span>
+    </div>
+  </div>
+  <ng-content></ng-content>
+</div>

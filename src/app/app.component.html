@@ -1,0 +1,12 @@
+<div class="p-5">
+  <ng-data-table [columns]="dtsColumns" [values]="dtValues" [sortable]="true" [loading]="true">
+    <ng-template ngDataTableActions let-value>
+      <button type="button" class="btn btn-primary btn-sm">
+        Save
+      </button>
+    </ng-template>
+    <ng-template ngDataTableColumn columnName="test" let-value>
+      <span style="color: red;">{{ value.test }}</span>
+    </ng-template>
+  </ng-data-table>
+</div>
